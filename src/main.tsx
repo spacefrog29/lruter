@@ -169,22 +169,37 @@ export function App() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900">
-      <header className="sticky top-0 z-30 backdrop-blur bg-white/70 border-b">
-        <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="size-9 rounded-xl bg-slate-900 text-white grid place-items-center font-bold">CSV</div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/20">
+      <header className="sticky top-0 z-30 glass border-b border-white/20">
+        <div className="max-w-5xl mx-auto px-4 py-5 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <div className="relative">
+              <div className="size-12 rounded-2xl gradient-accent shadow-glow grid place-items-center font-bold text-white text-sm animate-float">
+                CSV
+              </div>
+              <div className="absolute -inset-1 gradient-accent rounded-2xl opacity-20 animate-pulse-subtle"></div>
+            </div>
             <div>
-              <h1 className="text-xl font-semibold leading-tight">Sentence Picker</h1>
-              <p className="text-xs text-slate-500">Import a CSV • click a sentence • edit & copy</p>
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent leading-tight">
+                Sentence Picker
+              </h1>
+              <p className="text-sm text-slate-600 font-medium">Import a CSV • click a sentence • edit & copy</p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" onClick={() => fileInputRef.current?.click()} className="gap-2">
+          <div className="flex items-center gap-3">
+            <Button
+              variant="outline"
+              onClick={() => fileInputRef.current?.click()}
+              className="gap-2 border-slate-200/60 bg-white/80 hover:bg-white hover:shadow-glow transition-all duration-300"
+            >
               <Upload className="size-4" /> Import CSV
             </Button>
             {hasData && (
-              <Button variant="ghost" onClick={clearAll} className="gap-2">
+              <Button
+                variant="ghost"
+                onClick={clearAll}
+                className="gap-2 hover:bg-red-50 hover:text-red-600 transition-all duration-300"
+              >
                 <Trash2 className="size-4" /> Clear
               </Button>
             )}
@@ -199,112 +214,183 @@ export function App() {
         </div>
       </header>
 
-      <main className="max-w-5xl mx-auto px-4 pb-44">
+      <main className="max-w-5xl mx-auto px-4 pb-52">
         {/* Drop Zone */}
         <div
           ref={dropRef}
           onDrop={onDrop}
           onDragOver={onDragOver}
-          className="mt-6 rounded-2xl border-2 border-dashed border-slate-300 bg-white/70 px-4 py-8 grid place-items-center text-center hover:border-slate-400 transition-colors"
+          className="mt-8 relative group"
         >
-          <div className="flex flex-col items-center gap-3">
-            <Upload className="size-8" />
-            <div className="text-sm text-slate-600">
-              Drag & drop a <span className="font-medium text-slate-900">.csv</span> here
-              <span className="mx-1">or</span>
-              <button className="underline" onClick={() => fileInputRef.current?.click()}>browse</button>
+          <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-purple-500 rounded-3xl opacity-20 group-hover:opacity-30 transition-opacity duration-500 animate-pulse-subtle"></div>
+          <div className="relative rounded-3xl border-2 border-dashed border-slate-300 glass px-6 py-12 text-center hover:border-blue-400 transition-all duration-500 group-hover:shadow-glow-lg">
+            <div className="flex flex-col items-center gap-4">
+              <div className="p-4 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-500 shadow-glow">
+                <Upload className="size-8 text-white" />
+              </div>
+              <div className="space-y-2">
+                <div className="text-base font-semibold text-slate-800">
+                  Drag & drop a <span className="font-bold text-blue-600">.csv</span> file here
+                </div>
+                <div className="text-sm text-slate-600">
+                  <span>or </span>
+                  <button
+                    className="font-semibold text-blue-600 hover:text-blue-700 underline underline-offset-2 decoration-2 decoration-blue-200 hover:decoration-blue-300 transition-colors"
+                    onClick={() => fileInputRef.current?.click()}
+                  >
+                    browse your files
+                  </button>
+                </div>
+              </div>
+              {fileName && (
+                <div className="mt-3 px-4 py-2 rounded-xl bg-green-50 border border-green-200">
+                  <div className="flex items-center gap-2 text-sm font-medium text-green-800">
+                    <Check className="size-4" />
+                    Loaded: {fileName}
+                  </div>
+                </div>
+              )}
             </div>
-            {fileName && (
-              <div className="text-xs text-slate-500">Loaded: {fileName}</div>
-            )}
           </div>
         </div>
 
         {/* Controls & Stats */}
-        <div className="mt-6 flex flex-col md:flex-row md:items-center gap-3 md:gap-4">
-          <div className="relative md:w-96 w-full">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-slate-500" />
+        <div className="mt-8 flex flex-col md:flex-row md:items-center gap-4 md:gap-6">
+          <div className="relative md:w-96 w-full group">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-slate-500 group-focus-within:text-blue-500 transition-colors" />
             <Input
               placeholder="Filter sentences…"
               value={query}
               onChange={(e) => onFilter(e.target.value)}
-              className="pl-9"
+              className="pl-9 bg-white/80 border-slate-200/60 focus:border-blue-300 focus:ring-blue-100 transition-all duration-300 hover:shadow-glow"
             />
           </div>
-          <div className="text-xs text-slate-600">
-            {hasData ? (
-              <span>{stats.visible} shown • {stats.total} total</span>
-            ) : (
-              <span>Import a CSV to begin</span>
-            )}
+          <div className="flex items-center gap-3">
+            <div className="px-3 py-1.5 rounded-lg bg-slate-100/80 border border-slate-200/60">
+              <div className="text-sm font-medium text-slate-700">
+                {hasData ? (
+                  <span>
+                    <span className="text-blue-600 font-semibold">{stats.visible}</span> shown •
+                    <span className="text-slate-500 ml-1">{stats.total} total</span>
+                  </span>
+                ) : (
+                  <span className="text-slate-500">Import a CSV to begin</span>
+                )}
+              </div>
+            </div>
           </div>
         </div>
 
         {/* List */}
-        <Card className="mt-4">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base">Sentences</CardTitle>
+        <Card className="mt-6 bg-white/80 border-slate-200/60 shadow-glow-lg">
+          <CardHeader className="pb-3 border-b border-slate-100/80">
+            <CardTitle className="text-lg font-semibold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
+              Sentences
+            </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-0">
             {hasData ? (
-              <ScrollArea className="h-[50vh] pr-4">
-                <ul className="divide-y">
+              <ScrollArea className="h-[50vh]">
+                <ul className="divide-y divide-slate-100/80">
                   {filtered.map((s, i) => (
-                    <li key={i}>
+                    <li key={i} className="group">
                       <button
                         onClick={() => onSentenceClick(i)}
                         className={
-                          "w-full text-left px-3 py-3 hover:bg-slate-50 rounded-md transition-colors " +
-                          (selectedIndex === i ? "bg-slate-100" : "")
+                          "w-full text-left px-4 py-4 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50/30 transition-all duration-300 relative " +
+                          (selectedIndex === i
+                            ? "bg-gradient-to-r from-blue-100 to-purple-100/50 shadow-glow"
+                            : "")
                         }
                         aria-label={`Select sentence ${i + 1}`}
                       >
-                        <span className="text-sm leading-relaxed">{s}</span>
+                        <div className="flex items-start gap-3">
+                          <div className="flex-shrink-0 w-6 h-6 rounded-full bg-slate-200 group-hover:bg-blue-200 transition-colors duration-300 flex items-center justify-center mt-1">
+                            <span className="text-xs font-semibold text-slate-600 group-hover:text-blue-700">
+                              {i + 1}
+                            </span>
+                          </div>
+                          <span className="text-sm leading-relaxed text-slate-700 group-hover:text-slate-900 font-medium flex-1">
+                            {s}
+                          </span>
+                          {selectedIndex === i && (
+                            <div className="flex-shrink-0 text-blue-600">
+                              <Check className="size-4" />
+                            </div>
+                          )}
+                        </div>
                       </button>
                     </li>
                   ))}
                 </ul>
               </ScrollArea>
             ) : (
-              <div className="text-sm text-slate-500 py-8 text-center">No data yet. Import a CSV to populate the list.</div>
+              <div className="text-center py-12 px-6">
+                <div className="p-3 rounded-2xl bg-slate-100 inline-block mb-4">
+                  <FileUp className="size-8 text-slate-400" />
+                </div>
+                <div className="text-base font-medium text-slate-600 mb-2">No data yet</div>
+                <div className="text-sm text-slate-500">Import a CSV file to populate the list</div>
+              </div>
             )}
           </CardContent>
         </Card>
 
         {error && (
-          <div className="mt-4 text-sm text-red-600 bg-red-50 border border-red-200 rounded-xl p-3">
-            {error}
+          <div className="mt-6 p-4 rounded-2xl bg-red-50 border border-red-200 shadow-glow">
+            <div className="flex items-start gap-3">
+              <div className="flex-shrink-0 p-1 rounded-lg bg-red-100">
+                <div className="w-4 h-4 rounded-full bg-red-500"></div>
+              </div>
+              <div>
+                <div className="text-sm font-medium text-red-800 mb-1">Error</div>
+                <div className="text-sm text-red-700">{error}</div>
+              </div>
+            </div>
           </div>
         )}
       </main>
 
       {/* Sticky Editor */}
-      <div className="fixed bottom-0 left-0 right-0 border-t bg-white/95 backdrop-blur">
-        <div className="max-w-5xl mx-auto px-4 py-3">
-          <div className="flex items-center justify-between mb-2">
-            <h2 className="text-sm font-medium text-slate-700">Editor</h2>
-            <div className="text-xs text-slate-500">
-              {selectedIndex != null ? `Editing item ${selectedIndex + 1}` : "Nothing selected"}
+      <div className="fixed bottom-0 left-0 right-0 border-t border-slate-200/60 glass">
+        <div className="max-w-5xl mx-auto px-4 py-4">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <h2 className="text-base font-semibold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
+                Editor
+              </h2>
+              <div className="px-2 py-1 rounded-md bg-blue-100 border border-blue-200">
+                <div className="text-xs font-medium text-blue-700">
+                  {selectedIndex != null ? `Item ${selectedIndex + 1}` : "No selection"}
+                </div>
+              </div>
+            </div>
+            <div className="text-sm text-slate-600 font-medium">
+              {editorValue.length} character{editorValue.length !== 1 ? 's' : ''}
             </div>
           </div>
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-3">
             <Textarea
               placeholder="Click sentences above to append here…"
               value={editorValue}
               onChange={(e) => setEditorValue(e.target.value)}
-              className="min-h-[96px]"
+              className="min-h-[100px] bg-white/90 border-slate-200/60 focus:border-blue-300 focus:ring-blue-100 transition-all duration-300 resize-none"
             />
-            <div className="flex items-center gap-2 justify-between">
-              <div className="text-xs text-slate-500">{editorValue.length} characters</div>
-              <div className="flex items-center gap-2">
-                <Button variant="outline" className="gap-2" onClick={() => fileInputRef.current?.click()}>
-                  <FileUp className="size-4" /> Re-import
-                </Button>
-                <Button onClick={copyToClipboard} className="gap-2">
-                  {copied ? <Check className="size-4" /> : <Clipboard className="size-4" />}
-                  {copied ? "Copied" : "Copy"}
-                </Button>
-              </div>
+            <div className="flex items-center gap-3 justify-end">
+              <Button
+                variant="outline"
+                className="gap-2 border-slate-200/60 bg-white/80 hover:bg-white hover:shadow-glow transition-all duration-300"
+                onClick={() => fileInputRef.current?.click()}
+              >
+                <FileUp className="size-4" /> Re-import
+              </Button>
+              <Button
+                onClick={copyToClipboard}
+                className="gap-2 gradient-primary hover:shadow-glow-lg transition-all duration-300 text-white font-medium"
+              >
+                {copied ? <Check className="size-4" /> : <Clipboard className="size-4" />}
+                {copied ? "Copied!" : "Copy Text"}
+              </Button>
             </div>
           </div>
         </div>
