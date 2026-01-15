@@ -209,7 +209,7 @@ export function App() {
       </header>
 
       <main className="max-w-5xl mx-auto px-6 pb-52">
-              <div className="flex flex-col space-y-12">   {/* 👈 add this */}
+              <div className="flex flex-col space-y-40">   {/* 👈 add this */}
         {/* Drop Zone */}
         <div
           ref={dropRef}
@@ -352,7 +352,8 @@ export function App() {
               </div>
             </div>
           </div>
-        )}
+                  )}
+              </div>
       </main>
 
       {/* Sticky Editor */}
