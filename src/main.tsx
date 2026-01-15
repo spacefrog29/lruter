@@ -208,7 +208,7 @@ export function App() {
         </div>
       </header>
 
-      <main className="max-w-5xl mx-auto px-6 pb-52">
+      <main className="max-w-5xl mx-auto px-20 pb-52">
               <div className="flex flex-col space-y-40">   {/* 👈 add this */}
         {/* Drop Zone */}
         <div
