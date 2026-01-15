@@ -1,143 +1,128 @@
-@import url('https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  /* Refined border radius - more subtle */
-  --radius: 0.5rem;
+    /* Radius */
+    --radius: 0.5rem;
+    /* Core colors */
+    --background: 0 0% 100%; /* White */
+    --foreground: 222 22% 15%; /* Near-black */
 
-  /* Elegant & Sophisticated Color Palette */
-  --background: 60 14% 96%; /* Soft cream #F5F5F0 */
-  --foreground: 0 0% 17%; /* Charcoal #2C2C2E */
-
-  --card: 60 11% 98%; /* Warm white #FAFAF8 */
-  --card-foreground: 0 0% 17%;
-
-  --popover: 60 11% 98%;
-  --popover-foreground: 0 0% 17%;
-
-  --muted: 60 5% 93%; /* Light warm gray */
-  --muted-foreground: 0 0% 44%; /* Stone #6C6C70 */
-
-  --accent: 86 10% 40%; /* Deep sage #5A6C57 */
-  --accent-foreground: 0 0% 98%;
-
-  --destructive: 9 30% 42%; /* Muted terracotta #8B4A47 */
-  --destructive-foreground: 0 0% 98%;
-
-  --border: 60 9% 90%; /* Soft border #E5E5E0 */
-  --input: 60 9% 90%;
-
-  --primary: 86 10% 40%; /* Deep sage */
-  --primary-foreground: 0 0% 98%;
-
-  --secondary: 40 20% 88%; /* Warm gray */
-  --secondary-foreground: 0 0% 17%;
-
-  --ring: 86 10% 40%;
-
-  --success: 86 20% 35%; /* Muted forest green #4A6741 */
-
-  /* Elegant elevation system */
-  --shadow-sm: 0 1px 3px rgba(44, 44, 46, 0.08);
-  --shadow-md: 0 2px 8px rgba(44, 44, 46, 0.10);
-  --shadow-lg: 0 4px 16px rgba(44, 44, 46, 0.12);
-  --shadow-xl: 0 8px 24px rgba(44, 44, 46, 0.14);
+    --card: 0 0% 100%;
+    --card-foreground: 222 22% 15%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 22% 15%;
+    /* Neutral grays */
+    --muted: 210 20% 96%;
+    --muted-foreground: 215 15% 45%;
+    --border: 214 18% 90%;
+    --input: 214 18% 90%;
+    /* Light blue primary */
+    --primary: 210 90% 55%; /* Light blue */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 210 20% 96%;
+    --secondary-foreground: 222 22% 15%;
+    --accent: 210 90% 55%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 72% 50%;
+    --destructive-foreground: 0 0% 100%;
+    --ring: 210 90% 55%;
+    --success: 145 65% 40%;
+    /* Clean shadow system */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.08);
+    --shadow-lg: 0 10px 24px rgba(0, 0, 0, 0.10);
 }
 
 * {
-  border-color: hsl(var(--border));
+    border-color: hsl(var(--border));
 }
 
 body {
-  background-color: hsl(var(--background));
-  color: hsl(var(--foreground));
-  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  font-weight: 400;
-  font-feature-settings: "rlig" 1, "calt" 1, "kern" 1;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  letter-spacing: -0.011em;
-  line-height: 1.6;
-
-  /* Sophisticated textured background */
-  background-image:
-    linear-gradient(to bottom, rgba(90, 108, 87, 0.02), transparent 400px),
-    radial-gradient(circle at 20% 50%, rgba(90, 108, 87, 0.04) 0%, transparent 50%),
-    radial-gradient(circle at 80% 80%, rgba(184, 149, 106, 0.04) 0%, transparent 50%),
-    repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 2px,
-      rgba(90, 108, 87, 0.01) 2px,
-      rgba(90, 108, 87, 0.01) 4px
-    );
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-weight: 400;
+    line-height: 1.55;
+    letter-spacing: -0.01em;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
-/* Elegant utility classes */
+/* Elevation utilities */
 .elevation-1 {
-  box-shadow: var(--shadow-sm);
+    box-shadow: var(--shadow-sm);
 }
 
 .elevation-2 {
-  box-shadow: var(--shadow-md);
+    box-shadow: var(--shadow-md);
 }
 
 .elevation-3 {
-  box-shadow: var(--shadow-lg);
+    box-shadow: var(--shadow-lg);
 }
 
-.elevation-4 {
-  box-shadow: var(--shadow-xl);
-}
-
-.transition-elegant {
-  transition: all 200ms cubic-bezier(0.4, 0.0, 0.2, 1);
+/* Transitions */
+.transition-standard {
+    transition: all 200ms ease;
 }
 
 .transition-smooth {
-  transition: all 300ms cubic-bezier(0.4, 0.0, 0.2, 1);
+    transition: all 300ms ease;
 }
 
+/* Accent helpers */
 .border-accent-left {
-  border-left: 3px solid hsl(var(--accent));
+    border-left: 3px solid hsl(var(--primary));
 }
 
-/* Typography refinements */
+/* Typography */
 .font-display {
-  font-family: 'Lora', Georgia, serif;
-  letter-spacing: -0.02em;
-  font-weight: 600;
+    font-weight: 600;
+    letter-spacing: -0.015em;
 }
 
 .font-display-medium {
-  font-family: 'Lora', Georgia, serif;
-  letter-spacing: -0.015em;
-  font-weight: 500;
+    font-weight: 500;
 }
 
-/* Refined fade-in animation for content */
+/* Subtle fade-in */
 @keyframes fade-in {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .animate-fade-in {
-  animation: fade-in 400ms cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
+    animation: fade-in 300ms ease-out forwards;
 }
 
-/* Stagger delays for list items */
-.stagger-1 { animation-delay: 30ms; }
-.stagger-2 { animation-delay: 60ms; }
-.stagger-3 { animation-delay: 90ms; }
-.stagger-4 { animation-delay: 120ms; }
-.stagger-5 { animation-delay: 150ms; }
+/* Stagger utilities */
+.stagger-1 {
+    animation-delay: 40ms;
+}
+
+.stagger-2 {
+    animation-delay: 80ms;
+}
+
+.stagger-3 {
+    animation-delay: 120ms;
+}
+
+.stagger-4 {
+    animation-delay: 160ms;
+}
+
+.stagger-5 {
+    animation-delay: 200ms;
+}
