@@ -355,7 +355,7 @@ export function App() {
       </main>
 
       {/* Sticky Editor */}
-      <div className="fixed bottom-0 left-0 right-0 border-t border-border/60 bg-card/90 backdrop-blur-xl elevation-4 pb-2">
+          <div className="rounded-xl text-card-foreground shadow mt-8 bg-card/80 border border-border/60 elevation-3 overflow-hidden">
         <div className="max-w-5xl mx-auto px-6 py-6">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-4">
