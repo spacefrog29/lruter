@@ -173,10 +173,6 @@ export function App() {
       <header className="sticky top-0 z-30 bg-card/80 backdrop-blur-md border-b border-border/60 elevation-2">
         <div className="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between gap-6">
           <div className="flex items-center gap-4">
-            <div className="relative size-12 rounded-xl bg-gradient-to-br from-accent to-accent/80 grid place-items-center transition-smooth hover:scale-105 elevation-2">
-              <span className="font-display text-white text-lg tracking-tight">SP</span>
-              <div className="absolute -inset-0.5 bg-gradient-to-br from-accent to-accent/60 rounded-xl opacity-20 blur-sm"></div>
-            </div>
             <div>
               <h1 className="text-[28px] font-display text-foreground leading-tight tracking-tight">
                 Sentence Picker
@@ -218,7 +214,7 @@ export function App() {
           ref={dropRef}
           onDrop={onDrop}
           onDragOver={onDragOver}
-          className="mt-10"
+          className="mt-10 ai-style-change-2"
         >
           <div className="relative group">
             <div className="absolute -inset-0.5 bg-gradient-to-br from-accent/20 to-accent/5 rounded-2xl opacity-50 group-hover:opacity-70 transition-elegant blur-sm"></div>
@@ -258,14 +254,14 @@ export function App() {
         </div>
 
         {/* Controls & Stats */}
-        <div className="mt-10 flex flex-col md:flex-row md:items-center gap-4 md:gap-6">
+        <div className="mt-10 flex flex-col md:flex-row md:items-center gap-8 md:gap-8">
           <div className="relative md:w-96 w-full group">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-4 text-muted-foreground group-focus-within:text-accent transition-elegant" strokeWidth={1.8} />
             <Input
               placeholder="Filter sentences…"
               value={query}
               onChange={(e) => onFilter(e.target.value)}
-              className="pl-11 h-11 bg-card/80 border-border/60 focus:border-accent/50 focus:ring-accent/10 transition-elegant elevation-1 focus:elevation-2"
+              className="pl-14 h-11 bg-card/80 border-border/60 focus:border-accent/50 focus:ring-accent/10 transition-elegant elevation-1 focus:elevation-2"
             />
           </div>
           <div className="flex items-center gap-3">
@@ -359,7 +355,7 @@ export function App() {
       </main>
 
       {/* Sticky Editor */}
-      <div className="fixed bottom-0 left-0 right-0 border-t border-border/60 bg-card/90 backdrop-blur-xl elevation-4">
+      <div className="fixed bottom-0 left-0 right-0 border-t border-border/60 bg-card/90 backdrop-blur-xl elevation-4 pb-2">
         <div className="max-w-5xl mx-auto px-6 py-6">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-4">
@@ -378,7 +374,7 @@ export function App() {
               {editorValue.length} character{editorValue.length !== 1 ? 's' : ''}
             </div>
           </div>
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-5">
             <Textarea
               placeholder="Click sentences above to append here…"
               value={editorValue}
