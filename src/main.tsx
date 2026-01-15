@@ -256,7 +256,7 @@ export function App() {
         {/* Controls & Stats */}
         <div className="mt-10 flex flex-col md:flex-row md:items-center gap-8 md:gap-8">
           <div className="relative md:w-96 w-full group">
-            // <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-4 text-muted-foreground group-focus-within:text-accent transition-elegant" strokeWidth={1.8} />
+            {/*<Search className="absolute left-4 top-1/2 -translate-y-1/2 size-4 text-muted-foreground group-focus-within:text-accent transition-elegant" strokeWidth={1.8} />*/}
             <Input
               placeholder="Filter sentences…"
               value={query}
