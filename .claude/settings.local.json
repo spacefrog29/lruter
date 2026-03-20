@@ -1,16 +1,12 @@
 {
   "permissions": {
     "allow": [
-<<<<<<< HEAD
       "Bash(npm run build:*)",
-      "Bash(timeout 5 npx vite:*)"
-    ]
-=======
+      "Bash(timeout 5 npx vite:*)",
       "Bash(npm run dev:*)",
       "Skill(example-skills:frontend-design)"
     ],
     "deny": [],
     "ask": []
->>>>>>> 80e641d2c6588540f6277d44c63a5ee17b71b6b3
   }
 }

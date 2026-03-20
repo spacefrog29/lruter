@@ -1,15 +1,17 @@
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Icon } from "./Icon";
 import { SentenceCard } from "./SentenceCard";
+import type { CommentRow } from "./types";
 
 interface SentenceGridProps {
-  sentences: string[];
-  selectedIndex: number | null;
-  onSentenceClick: (index: number) => void;
+  rows: CommentRow[];
+  selectedId: string | null;
+  onRowClick: (row: CommentRow) => void;
   hasData: boolean;
+  fileName: string | null;
 }
 
-export function SentenceGrid({ sentences, selectedIndex, onSentenceClick, hasData }: SentenceGridProps) {
+export function SentenceGrid({ rows, selectedId, onRowClick, hasData, fileName }: SentenceGridProps) {
   if (!hasData) {
     return (
       <section>
@@ -29,20 +31,20 @@ export function SentenceGrid({ sentences, selectedIndex, onSentenceClick, hasDat
       <div className="mb-5">
         <h3 className="text-sm font-bold text-primary flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-primary" />
-          RECENTLY IMPORTED &bull; SESSION_042
+          {fileName ? `IMPORTED FROM ${fileName.toUpperCase()}` : "RECENTLY IMPORTED"}
         </h3>
       </div>
 
       {/* Scrollable card grid */}
       <ScrollArea className="h-[50vh]">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pr-2">
-          {sentences.map((s, i) => (
+          {rows.map((row, i) => (
             <SentenceCard
-              key={i}
-              sentence={s}
+              key={row.id}
+              row={row}
               index={i}
-              isSelected={selectedIndex === i}
-              onClick={() => onSentenceClick(i)}
+              isSelected={selectedId === row.id}
+              onClick={() => onRowClick(row)}
             />
           ))}
         </div>

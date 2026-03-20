@@ -5,6 +5,7 @@ interface WorkspaceBarProps {
   onEditorChange: (val: string) => void;
   wordCount: number;
   sentenceCount: number;
+  selectedGroup: string | null;
   onCopy: () => void;
   onExport: () => void;
   onReimport: () => void;
@@ -18,6 +19,7 @@ export function WorkspaceBar({
   onEditorChange,
   wordCount,
   sentenceCount,
+  selectedGroup,
   onCopy,
   onExport,
   onReimport,
@@ -30,11 +32,16 @@ export function WorkspaceBar({
       <div className="bg-surface-container-lowest rounded-2xl shadow-[0_12px_48px_-8px_rgba(86,37,168,0.08)] overflow-hidden">
         {/* Header — tonal shift background instead of border per design spec */}
         <div className="flex items-center justify-between px-6 py-3 bg-surface-container-low/60">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <Icon name="contract_edit" className="text-primary !text-xl" />
             <span className="text-[0.6875rem] font-bold uppercase tracking-[0.1em] text-on-surface-variant">
               Active Workspace
             </span>
+            {selectedGroup && (
+              <span className="text-[0.625rem] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-md">
+                {selectedGroup}
+              </span>
+            )}
           </div>
           <div className="flex items-center gap-1">
             <button

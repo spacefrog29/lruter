@@ -10,36 +10,75 @@ import { FilterRow } from "@/components/app/FilterRow";
 import { SentenceGrid } from "@/components/app/SentenceGrid";
 import { WorkspaceBar } from "@/components/app/WorkspaceBar";
 import { Icon } from "@/components/app/Icon";
+import {
+  type CommentRow,
+  DEFAULT_GROUP,
+  safeStr,
+  normaliseGroup,
+  appendWithSmartSpace,
+} from "@/components/app/types";
 
 // ─────────────────────────────────────────────────────────────
 // Sentence Picker — "Digital Curator" Editorial Design
 //
 // CSV import → sentence list → click to collect → copy/export
+// Supports 1-column (text only) and 2-column (group, text) CSVs
 // ─────────────────────────────────────────────────────────────
 
-function appendWithSmartSpace(prev: string, next: string): string {
-  if (!prev) return next;
-  const needsSpace = !(prev.endsWith(" ") || prev.endsWith("\n") || prev.endsWith("\t"));
-  return prev + (needsSpace ? " " : "") + next;
-}
-
 export function App() {
-  const [sentences, setSentences] = useState<string[]>([]);
-  const [filtered, setFiltered] = useState<string[]>([]);
-  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const [rows, setRows] = useState<CommentRow[]>([]);
+  const [filtered, setFiltered] = useState<CommentRow[]>([]);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+
   const [editorValue, setEditorValue] = useState("");
   const [copied, setCopied] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [fileName, setFileName] = useState<string | null>(null);
+
   const [query, setQuery] = useState("");
+  const [selectedGroup, setSelectedGroup] = useState<string>("ALL");
   const [sentenceCount, setSentenceCount] = useState(0);
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const dropRef = useRef<HTMLDivElement | null>(null);
 
-  const hasData = sentences.length > 0;
+  const hasData = rows.length > 0;
 
-  // ── CSV parsing ──────────────────────────────────────────
+  // ── Derived: unique sorted groups ────────────────────────
+  const groups = useMemo(() => {
+    const set = new Set<string>();
+    for (const r of rows) set.add(r.group);
+    return Array.from(set).sort((a, b) => a.localeCompare(b));
+  }, [rows]);
+
+  // ── Filter logic (searches both group + text) ────────────
+  const applyFilters = useCallback(
+    (nextRows: CommentRow[], nextQuery: string, nextGroup: string) => {
+      const q = nextQuery.trim().toLowerCase();
+      let out = nextRows;
+
+      if (nextGroup !== "ALL") {
+        out = out.filter((r) => r.group === nextGroup);
+      }
+
+      if (q) {
+        out = out.filter((r) => {
+          const hay = `${r.group} ${r.text}`.toLowerCase();
+          return hay.includes(q);
+        });
+      }
+
+      setFiltered(out);
+
+      // If selected item is no longer visible, clear selection
+      if (selectedId && !out.some((r) => r.id === selectedId)) {
+        setSelectedId(null);
+      }
+    },
+    [selectedId]
+  );
+
+  // ── CSV parsing (supports 1-col and 2-col formats) ──────
   const parseCsvFile = useCallback((file: File) => {
     setError(null);
     setFileName(file.name);
@@ -50,26 +89,60 @@ export function App() {
       skipEmptyLines: true,
       complete: (results) => {
         try {
-          const rows = (results.data as any[])
-            .map((row) => (Array.isArray(row) ? row : [row]))
-            .map((arr: any[]) => arr.map((v) => (v == null ? "" : String(v))).join(","))
-            .map((s: string) => s.trim())
-            .filter((s: string) => s.length > 0);
+          const rawRows = (results.data as unknown[]).map((row) =>
+            Array.isArray(row) ? row : [row]
+          );
 
-          if (rows.length === 0) {
+          const parsed: CommentRow[] = rawRows
+            .map((arr, idx) => {
+              const col0 = safeStr(arr[0]).trim();
+              const col1 = safeStr(arr[1]).trim();
+
+              // 1-column CSV: treat column 0 as the text
+              if (arr.length <= 1) {
+                return {
+                  id: `${idx}-${col0.slice(0, 24)}`,
+                  group: DEFAULT_GROUP,
+                  text: col0,
+                  order: idx,
+                };
+              }
+
+              // 2+ column CSV: first column is group, second is text
+              return {
+                id: `${idx}-${normaliseGroup(col0).slice(0, 18)}-${col1.slice(0, 18)}`,
+                group: normaliseGroup(col0),
+                text: col1,
+                order: idx,
+              };
+            })
+            .map((r) => ({
+              ...r,
+              group: normaliseGroup(r.group),
+              text: r.text.trim(),
+            }))
+            .filter((r) => r.text.length > 0);
+
+          if (parsed.length === 0) {
             setError("No sentences found in the file.");
-            setSentences([]);
+            setRows([]);
             setFiltered([]);
-            setSelectedIndex(null);
+            setSelectedId(null);
             setEditorValue("");
+            setSelectedGroup("ALL");
+            setQuery("");
             setSentenceCount(0);
             return;
           }
-          setSentences(rows);
-          setFiltered(rows);
-          setSelectedIndex(null);
+
+          setRows(parsed);
+          setSelectedGroup("ALL");
+          setQuery("");
+          setSelectedId(null);
           setEditorValue("");
+          setCopied(false);
           setSentenceCount(0);
+          setFiltered(parsed);
         } catch (e: any) {
           console.error(e);
           setError("Couldn't parse that file. Please check the format.");
@@ -110,9 +183,9 @@ export function App() {
   };
 
   // ── Actions ──────────────────────────────────────────────
-  const onSentenceClick = (idx: number) => {
-    setSelectedIndex(idx);
-    setEditorValue((prev) => appendWithSmartSpace(prev, filtered[idx] ?? ""));
+  const onRowClick = (row: CommentRow) => {
+    setSelectedId(row.id);
+    setEditorValue((prev) => appendWithSmartSpace(prev, row.text));
     setSentenceCount((c) => c + 1);
     setCopied(false);
   };
@@ -128,28 +201,31 @@ export function App() {
   };
 
   const clearAll = () => {
-    setSentences([]);
+    setRows([]);
     setFiltered([]);
-    setSelectedIndex(null);
+    setSelectedId(null);
     setEditorValue("");
     setFileName(null);
     setQuery("");
+    setSelectedGroup("ALL");
     setError(null);
     setSentenceCount(0);
   };
 
-  const onFilter = useCallback(
+  const onFilterText = useCallback(
     (val: string) => {
       setQuery(val);
-      if (!val) {
-        setFiltered(sentences);
-        return;
-      }
-      const q = val.toLowerCase();
-      setFiltered(sentences.filter((s) => s.toLowerCase().includes(q)));
-      setSelectedIndex(null);
+      applyFilters(rows, val, selectedGroup);
     },
-    [sentences]
+    [applyFilters, rows, selectedGroup]
+  );
+
+  const onFilterGroup = useCallback(
+    (val: string) => {
+      setSelectedGroup(val);
+      applyFilters(rows, query, val);
+    },
+    [applyFilters, rows, query]
   );
 
   // ── Derived state ────────────────────────────────────────
@@ -158,7 +234,12 @@ export function App() {
     return editorValue.trim().split(/\s+/).length;
   }, [editorValue]);
 
-  // ── Self-test (dev only) ─────────────────────────────────
+  const selectedRow = useMemo(() => {
+    if (!selectedId) return null;
+    return rows.find((r) => r.id === selectedId) ?? null;
+  }, [rows, selectedId]);
+
+  // ── Self-tests (dev only) ────────────────────────────────
   useEffect(() => {
     try {
       const a = appendWithSmartSpace;
@@ -167,7 +248,24 @@ export function App() {
       console.assert(a("Hello ", "World") === "Hello World", "Test 3: keep space");
       console.assert(a("Hello\n", "World") === "Hello\nWorld", "Test 4: newline");
       console.assert(a("Hello\t", "World") === "Hello\tWorld", "Test 5: tab");
-      console.info("Runtime tests passed: 5/5");
+
+      // CSV parse smoke tests (from Tom's original)
+      const oneCol = Papa.parse("One\nTwo\nThree", { header: false, skipEmptyLines: true });
+      console.assert(
+        Array.isArray(oneCol.data) && (oneCol.data as any[]).length === 3,
+        "Test 6: 1-col length"
+      );
+
+      const twoCol = Papa.parse("GroupA,Comment 1\nGroupB,Comment 2", {
+        header: false,
+        skipEmptyLines: true,
+      });
+      console.assert(
+        Array.isArray(twoCol.data) && (twoCol.data as any[]).length === 2,
+        "Test 7: 2-col length"
+      );
+
+      console.info("Runtime tests passed: 7/7");
     } catch (err) {
       console.warn("A runtime test failed", err);
     }
@@ -202,17 +300,21 @@ export function App() {
 
           <FilterRow
             query={query}
-            onFilter={onFilter}
+            onFilterText={onFilterText}
+            selectedGroup={selectedGroup}
+            onFilterGroup={onFilterGroup}
+            groups={groups}
             visibleCount={filtered.length}
-            totalCount={sentences.length}
+            totalCount={rows.length}
             hasData={hasData}
           />
 
           <SentenceGrid
-            sentences={filtered}
-            selectedIndex={selectedIndex}
-            onSentenceClick={onSentenceClick}
+            rows={filtered}
+            selectedId={selectedId}
+            onRowClick={onRowClick}
             hasData={hasData}
+            fileName={fileName}
           />
 
           {/* Error display */}
@@ -229,6 +331,7 @@ export function App() {
             onEditorChange={setEditorValue}
             wordCount={wordCount}
             sentenceCount={sentenceCount}
+            selectedGroup={selectedRow?.group ?? null}
             onCopy={copyToClipboard}
             onExport={copyToClipboard}
             onReimport={() => fileInputRef.current?.click()}

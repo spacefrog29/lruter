@@ -6,3 +6,5 @@ export { FilterRow } from "./FilterRow";
 export { SentenceCard } from "./SentenceCard";
 export { SentenceGrid } from "./SentenceGrid";
 export { WorkspaceBar } from "./WorkspaceBar";
+export type { CommentRow } from "./types";
+export { DEFAULT_GROUP, safeStr, normaliseGroup, appendWithSmartSpace } from "./types";
